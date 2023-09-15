@@ -1,0 +1,4 @@
+[tools.pyright]
+include = "flaskr"
+venvPath = "."
+venv = "pyPoll-env"
