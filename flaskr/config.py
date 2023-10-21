@@ -1,3 +1,6 @@
+import os
+
+
 class Config:
     DEBUG = True
     SECRET_KEY = "dev"
@@ -9,3 +12,22 @@ class Config:
     AWS_COGNITO_USER_POOL_CLIENT_SECRET = (
         "10gbdtl519cp0fk2h5me2sveu6f375fbuc3eoo73l7o26nrvtotg"
     )
+
+    JWT_TOKEN_LOCATION = ["cookies"]
+    JWT_COOKIE_SECURE = True
+
+    JWT_COOKIE_CSRF_PROTECT = False
+    JWT_ALGORITHM = "RS256"
+    JWT_IDENTITY_CLAIM = "sub"
+
+    SECRET_KEY = "abc"
+    JWT_PRIVATE_KEY = "abc"
+    JWT_ACCESS_COOKIE_NAME = "accessToken"
+    JWT_COOKIE_DOMAIN = "localhost"
+    JWT_ACCESS_COOKIE_PATH = "/"
+    JWT_COOKIE_SAMESITE = "Lax"
+    JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-Token"
+    JWT_ACCESS_CSRF_FIELD_NAME = "csrf_token"
+
+    # not used with cognito
+    JWT_SECRET_KEY = "abc"

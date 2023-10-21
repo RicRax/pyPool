@@ -23,7 +23,6 @@ def create_app(test_config=None):
 
     cognito.cognitoRoutes(app, aws_auth)
 
-    # a simple page that says hello
     @app.route("/index")
     @aws_auth.authentication_required
     def hello():
