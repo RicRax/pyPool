@@ -1,5 +1,5 @@
 .mypy_cache/
 flaskr/__pycache__/
-
+flaskr/config.py
 
 
