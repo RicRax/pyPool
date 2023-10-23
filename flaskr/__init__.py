@@ -6,6 +6,7 @@ from flask_awscognito import AWSCognitoAuthentication
 
 from .config import Config
 from . import cognito
+from . import db
 
 
 def create_app(test_config=None):
@@ -22,6 +23,7 @@ def create_app(test_config=None):
         pass
 
     cognito.cognitoRoutes(app, aws_auth)
+    db.initDB()
 
     @app.route("/index")
     @aws_auth.authentication_required
