@@ -13,6 +13,8 @@ from flask_jwt_extended import (
     get_jwt_identity,
 )
 
+from . import db
+
 
 def createPollRoutes(app, aws_auth):
     @app.route("/createPoll")
@@ -24,7 +26,6 @@ def createPollRoutes(app, aws_auth):
 
     @app.route("/createEndpoint", methods=["POST"])
     def createEndpoint():
-        data = request.form
+        db.createPoll(request.form["poll_title"], request.form["poll_description"])
 
-        print(data)
-        return jsonify(data)
+        return jsonify(request.form)

@@ -1,3 +1,4 @@
+from os import walk
 import psycopg2
 
 
@@ -52,8 +53,30 @@ def initDB():
     """
     )
 
-    # Commit the changes
     conn.commit()
-    # Close the connection
     cursor.close()
     conn.close()
+
+
+def createPoll(title, description):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    print("creating table")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    insert_query = (
+        "INSERT INTO polls (title, description) VALUES (%s, %s) RETURNING title"
+    )
+    cursor.execute(insert_query, (title, description))
+
+    title = cursor.fetchone()
+    print(title)
+    # not sure if working properly
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return
