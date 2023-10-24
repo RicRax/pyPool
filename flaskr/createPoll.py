@@ -21,3 +21,10 @@ def createPollRoutes(app, aws_auth):
         if get_jwt_identity() is None:
             return jsonify({"claims": "not authenticated"})
         return render_template("createPoll.html")
+
+    @app.route("/createEndpoint", methods=["POST"])
+    def createEndpoint():
+        data = request.form
+
+        print(data)
+        return jsonify(data)
