@@ -7,7 +7,7 @@ from flask_awscognito import AWSCognitoAuthentication
 from .config import Config
 from . import cognito
 from . import db
-from . import createPoll
+from . import polls
 
 
 def create_app(test_config=None):
@@ -24,7 +24,8 @@ def create_app(test_config=None):
         pass
 
     cognito.cognitoRoutes(app, aws_auth)
-    createPoll.createPollRoutes(app, aws_auth)
+    polls.createPollRoutes(app, aws_auth)
+    polls.viewPollRoutes(app, aws_auth)
     db.initDB()
 
     @app.route("/index")

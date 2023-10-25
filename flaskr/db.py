@@ -80,3 +80,37 @@ def createPoll(title, description):
     conn.close()
 
     return
+
+
+def selectPoll(pollID):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    print("selecting table")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    insert_query = "SELECT * FROM polls WHERE poll_id = %s"
+    cursor.execute(insert_query, pollID)
+
+    poll = cursor.fetchone()
+    if poll:
+        # Process the data as needed
+        poll_id, title, description, created_at, user_id = poll
+        result = {
+            "poll_id": poll_id,
+            "title": title,
+            "description": description,
+            "created_at": created_at,
+            "user_id": user_id,
+        }
+    else:
+        return "Poll not found."
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    print(result)
+
+    return result
