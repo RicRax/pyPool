@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poll Page</title>
+</head>
+<body>
+    <h1>Poll Choices</h1>
+
+    <!-- Display poll choices here -->
+    <ul id="choices-list"></ul>
+
+    <h2>Vote for a Choice</h2>
+    <form id="vote-form">
+        <select id="choice-select">
+            <!-- Options will be populated using JavaScript -->
+        </select>
+        <button type="submit">Vote</button>
+    </form>
+
+    <div id="result-message"></div>
+
+    <script>
+    // Fetch poll choices and populate the options in the dropdown
+    fetch(`/getPoll/{{ pollID }}`)
+        .then(response => response.json())
+        .then(data => {
+            const choicesList = document.getElementById("choices-list");
+            const choiceSelect = document.getElementById("choice-select");
+
+            data.choices.forEach(choice => {
+                choicesList.innerHTML += `<li>${choice}</li>`;
+                choiceSelect.innerHTML += `<option value="${choice}">${choice}</option>`;
+            });
+        })
+        .catch(error => console.error("Error fetching poll choices:", error));
+
+    // Handle form submission (voting)
+    const voteForm = document.getElementById("vote-form");
+    const resultMessage = document.getElementById("result-message");
+
+    voteForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const selectedChoice = document.getElementById("choice-select").value;
+        if (!selectedChoice) {
+            resultMessage.textContent = "Please select a choice.";
+            return;
+        }
+
+        fetch(`/voteEndpoint/{{ pollID }}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ choice: selectedChoice }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                resultMessage.textContent = data.message;
+            })
+            .catch(error => console.error("Error submitting vote:", error));
+    });
+    </script>
+</body>
+</html>

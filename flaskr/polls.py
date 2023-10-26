@@ -30,10 +30,8 @@ def createPollRoutes(app, aws_auth):
 
         return jsonify(request.form)
 
-
-def viewPollRoutes(app, aws_auth):
-    @app.route("/viewPoll/<pollID>")
-    def viewPoll(pollID):
+    @app.route("/getPoll/<int:pollID>")
+    def getPoll(pollID):
         # verify_jwt_in_request()
         # if get_jwt_identity() is None:
         #     return jsonify({"claims": "not authenticated"})
@@ -43,3 +41,25 @@ def viewPollRoutes(app, aws_auth):
         print(pollInfo)
 
         return jsonify(pollInfo)
+
+    @app.route("/viewPoll/<int:pollID>")
+    def viewPoll(pollID):
+        verify_jwt_in_request()
+        if get_jwt_identity() is None:
+            return jsonify({"claims": "not authenticated"})
+        return render_template("viewPoll.html", pollID=pollID)
+
+    @app.route("/votePoll/<int:pollID>")
+    def votePoll(pollID):
+        verify_jwt_in_request()
+        if get_jwt_identity() is None:
+            return jsonify({"claims": "not authenticated"})
+        return render_template("votePoll.html", pollID=pollID)
+
+    @app.route("/voteEndpoint/<int:pollID>")
+    def voteEndpoint(pollID):
+        verify_jwt_in_request()
+        if get_jwt_identity() is None:
+            return jsonify({"claims": "not authenticated"})
+        db.insertVote(pollID)
+        return redirect(url_for("viewPoll", pollID=pollID))
