@@ -8,6 +8,7 @@ from flask import (
     url_for,
 )
 import json
+import logging
 from flask_jwt_extended import (
     verify_jwt_in_request,
     get_jwt_identity,
@@ -26,9 +27,14 @@ def createPollRoutes(app, aws_auth):
 
     @app.route("/createEndpoint", methods=["POST"])
     def createEndpoint():
-        db.createPoll(request.form["poll_title"], request.form["poll_description"])
-
-        return jsonify(request.form)
+        app.logger.info(f"Received form data: {request.get_json()}")
+        data = request.get_json()
+        db.createPoll(
+            data["poll_title"],
+            data["poll_description"],
+            data["choices[]"],
+        )
+        return jsonify("hello")
 
     @app.route("/getPoll/<int:pollID>")
     def getPoll(pollID):
@@ -56,10 +62,16 @@ def createPollRoutes(app, aws_auth):
             return jsonify({"claims": "not authenticated"})
         return render_template("votePoll.html", pollID=pollID)
 
-    @app.route("/voteEndpoint/<int:pollID>")
+    @app.route("/voteEndpoint/<int:pollID>", methods=["POST"])
     def voteEndpoint(pollID):
         verify_jwt_in_request()
         if get_jwt_identity() is None:
             return jsonify({"claims": "not authenticated"})
-        db.insertVote(pollID)
-        return redirect(url_for("viewPoll", pollID=pollID))
+
+        data = request.get_json()
+
+        choiceText = data["choice"]
+
+        votes = db.insertVote(pollID, choiceText)
+        print(votes)
+        return jsonify(votes)

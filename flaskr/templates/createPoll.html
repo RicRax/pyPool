@@ -5,9 +5,10 @@
 </head>
 <body>
     <h1>Create a Poll</h1>
-    <form action="http://localhost:5000/createEndpoint" method="POST">
+    <form  id="myForm" action="http://localhost:5000/createEndpoint" method="POST">
         <label for="poll_title">Poll Title:</label>
         <input type="text" id="poll_title" name="poll_title" required><br><br>
+        <input type="hidden" name="json_data" ="json_data" value="">
 
         <label for="poll_description">Poll Description:</label>
         <textarea id="poll_description" name="poll_description" rows="4" cols="50"></textarea><br><br>
@@ -47,6 +48,36 @@
 
             document.getElementById("choices").appendChild(choiceDiv);
         }
+
+
+        document.getElementById('myForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Serialize the form data into a JSON object
+        var formData = new FormData(this);
+        var formDataObject = {};
+        formData.forEach(function(value, key) {
+            if (key in formDataObject) {
+                if (!Array.isArray(formDataObject[key])) {
+                    formDataObject[key] = [formDataObject[key]];
+                }
+                formDataObject[key].push(value);
+            } else {
+                formDataObject[key] = value;
+            }
+        });
+
+        // Convert the JSON object to a JSON string
+        var jsonString = JSON.stringify(formDataObject);
+        fetch(`/createEndpoint`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: jsonString,
+        })
+
+    });
     </script>
 </body>
 </html>

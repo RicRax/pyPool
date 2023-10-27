@@ -1,8 +1,9 @@
 from os import walk
+import logging
 import psycopg2
 
 
-def initDB():
+def initDB(app):
     conn = psycopg2.connect(user="riccardo", database="pyPoll")
 
     conn.autocommit = True
@@ -36,19 +37,8 @@ def initDB():
     CREATE TABLE IF NOT EXISTS choices (
         choice_id SERIAL PRIMARY KEY,
         choice_text TEXT NOT NULL,
-        poll_id INT REFERENCES polls(poll_id)
-    )
-    """
-    )
-
-    # Create the responses table
-    cursor.execute(
-        """
-    CREATE TABLE IF NOT EXISTS responses (
-        response_id SERIAL PRIMARY KEY,
-        user_id INT REFERENCES users(user_id),
-        choice_id INT REFERENCES choices(choice_id),
-        chosen_choices INT[]
+        poll_id INT REFERENCES polls(poll_id),
+        votes INT 
     )
     """
     )
@@ -58,7 +48,7 @@ def initDB():
     conn.close()
 
 
-def createPoll(title, description):
+def createPoll(title, description, choices):
     conn = psycopg2.connect(user="riccardo", database="pyPoll")
 
     print("creating table")
@@ -67,15 +57,20 @@ def createPoll(title, description):
     cursor = conn.cursor()
 
     insert_query = (
-        "INSERT INTO polls (title, description) VALUES (%s, %s) RETURNING title"
+        "INSERT INTO polls (title, description) VALUES (%s, %s) RETURNING poll_id"
     )
     cursor.execute(insert_query, (title, description))
-
-    title = cursor.fetchone()
-    print(title)
-    # not sure if working properly
-
     conn.commit()
+
+    poll_id = cursor.fetchone()
+
+    for choice in choices:
+        insert_query = (
+            "INSERT INTO choices (poll_id, choice_text,votes) VALUES (%s, %s, 0) "
+        )
+        cursor.execute(insert_query, (poll_id, choice))
+        conn.commit()
+
     cursor.close()
     conn.close()
 
@@ -114,3 +109,24 @@ def selectPoll(pollID):
     print(result)
 
     return result
+
+
+def insertVote(pollID, choiceText):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    print("insertingVote")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    update_query = "UPDATE choices SET votes = votes + 1 WHERE pollID = %s AND choice_text = %s RETURNING votes"
+    cursor.execute(update_query, (pollID, choiceText))
+
+    votes = cursor.fetchone()
+    # not sure if working properly
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return votes
