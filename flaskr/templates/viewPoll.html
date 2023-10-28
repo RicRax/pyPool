@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poll Details</title>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Poll Details</h1>
+    <div id="poll-details">
+        <h2 id="poll-title"></h2>
+        <p id="poll-description"></p>
+        <canvas id="chart" width="400" height="400"></canvas>
+    </div>
+
+    <script>
+        // Fetch poll details from the Flask API
+      fetch(`/getpoll/{{ pollID }}`)
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML elements with poll data
+                document.getElementById('poll-title').textContent = data.title;
+                document.getElementById('poll-description').textContent = data.description;
+                
+                // Fetch choices and vote counts from /getChoices/{pollID}
+              return fetch(`/getChoices/{{ pollID }}`);
+            })
+            .then(response => response.json())
+            .then(choiceData => {
+                // Extract choice text and vote counts
+                const choices = choiceData.map(choice => choice[1]); // Second index for choice text
+                const voteCounts = choiceData.map(choice => choice[3]); // Third index for vote counts
+
+                // Create a bar chart to display vote counts
+                const chartCanvas = document.getElementById('chart').getContext('2d');
+                new Chart(chartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: choices,
+                        datasets: [{
+                            label: 'Votes',
+                            data: voteCounts,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Bar color
+                            borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+</html>

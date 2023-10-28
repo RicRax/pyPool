@@ -131,6 +131,26 @@ def getChoicesText(pollID):
     return choices
 
 
+def getChoices(pollID):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    insert_query = "SELECT * FROM choices WHERE poll_id = '%s'"
+    cursor.execute(insert_query, (pollID,))
+
+    choices = cursor.fetchall()
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    print(choices)
+
+    return choices
+
+
 def insertVote(pollID, choiceText):
     conn = psycopg2.connect(user="riccardo", database="pyPoll")
 

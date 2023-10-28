@@ -42,7 +42,7 @@ def createPollRoutes(app, aws_auth):
         # if get_jwt_identity() is none:
         #     return jsonify({"claims": "not authenticated"})
         #
-        pollinfo = db.selectpoll(pollid)
+        pollinfo = db.selectPoll(pollid)
 
         print(pollinfo)
 
@@ -76,13 +76,25 @@ def createPollRoutes(app, aws_auth):
         print(votes)
         return jsonify(votes)
 
+    @app.route("/getChoicesText/<int:pollid>")
+    def getChoicesText(pollid):
+        # verify_jwt_in_request()
+        # if get_jwt_identity() is none:
+        #     return jsonify({"claims": "not authenticated"})
+        #
+        choices = db.getChoicesText(pollid)
+
+        print(choices)
+
+        return jsonify(choices)
+
     @app.route("/getChoices/<int:pollid>")
     def getChoices(pollid):
         # verify_jwt_in_request()
         # if get_jwt_identity() is none:
         #     return jsonify({"claims": "not authenticated"})
         #
-        choices = db.getChoicesText(pollid)
+        choices = db.getChoices(pollid)
 
         print(choices)
 
