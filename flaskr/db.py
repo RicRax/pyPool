@@ -85,8 +85,8 @@ def selectPoll(pollID):
     conn.autocommit = True
     cursor = conn.cursor()
 
-    insert_query = "SELECT * FROM polls WHERE poll_id = %s"
-    cursor.execute(insert_query, pollID)
+    insert_query = "SELECT * FROM polls WHERE poll_id = '%s'"
+    cursor.execute(insert_query, (pollID,))
 
     poll = cursor.fetchone()
     if poll:
@@ -111,6 +111,26 @@ def selectPoll(pollID):
     return result
 
 
+def getChoicesText(pollID):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    insert_query = "SELECT choice_text FROM choices WHERE poll_id = '%s'"
+    cursor.execute(insert_query, (pollID,))
+
+    choices = cursor.fetchall()
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    print(choices)
+
+    return choices
+
+
 def insertVote(pollID, choiceText):
     conn = psycopg2.connect(user="riccardo", database="pyPoll")
 
@@ -119,7 +139,7 @@ def insertVote(pollID, choiceText):
     conn.autocommit = True
     cursor = conn.cursor()
 
-    update_query = "UPDATE choices SET votes = votes + 1 WHERE pollID = %s AND choice_text = %s RETURNING votes"
+    update_query = "UPDATE choices SET votes = votes + 1 WHERE poll_id = %s AND choice_text = %s RETURNING votes"
     cursor.execute(update_query, (pollID, choiceText))
 
     votes = cursor.fetchone()

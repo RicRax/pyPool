@@ -21,15 +21,15 @@
 
     <script>
     // Fetch poll choices and populate the options in the dropdown
-    fetch(`/getPoll/{{ pollID }}`)
+    fetch(`/getChoices/{{ pollID }}`)
         .then(response => response.json())
         .then(data => {
             const choicesList = document.getElementById("choices-list");
             const choiceSelect = document.getElementById("choice-select");
 
-            data.choices.forEach(choice => {
-                choicesList.innerHTML += `<li>${choice}</li>`;
-                choiceSelect.innerHTML += `<option value="${choice}">${choice}</option>`;
+            data.forEach(choice => {
+                choicesList.innerHTML += `<li>${choice[0]}</li>`;
+                choiceSelect.innerHTML += `<option value="${choice[0]}">${choice[0]}</option>`;
             });
         })
         .catch(error => console.error("Error fetching poll choices:", error));
