@@ -13,7 +13,9 @@ def initDB(app):
     cursor.execute(
         """
     CREATE TABLE IF NOT EXISTS users (
-        user_id SERIAL PRIMARY KEY
+        user_id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        sub VARCHAR(100) UNIQUE NOT NULL
     )
     """
     )
@@ -48,7 +50,42 @@ def initDB(app):
     conn.close()
 
 
-def createPoll(title, description, choices):
+def checkIfUserExists(username, sub):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    insert_query = "SELECT * FROM users WHERE username = %s AND sub = %s"
+    cursor.execute(insert_query, (username, sub))
+
+    user_exists = cursor.fetchone()
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    if user_exists is not None:
+        return True
+    else:
+        return False
+
+
+def addUser(username, sub):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    insert_query = "INSERT INTO users (username,sub) VALUES (%s,%s)"
+    cursor.execute(insert_query, (username, sub))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def createPoll(title, description, choices, username):
     conn = psycopg2.connect(user="riccardo", database="pyPoll")
 
     print("creating table")
@@ -56,10 +93,14 @@ def createPoll(title, description, choices):
     conn.autocommit = True
     cursor = conn.cursor()
 
-    insert_query = (
-        "INSERT INTO polls (title, description) VALUES (%s, %s) RETURNING poll_id"
-    )
-    cursor.execute(insert_query, (title, description))
+    select_user = "SELECT user_id FROM users WHERE username = %s"
+    cursor.execute(select_user, (username,))
+    user_id = cursor.fetchone()
+
+    conn.commit()
+
+    insert_query = "INSERT INTO polls (title, description,user_id) VALUES (%s, %s, %s) RETURNING poll_id"
+    cursor.execute(insert_query, (title, description, user_id))
     conn.commit()
 
     poll_id = cursor.fetchone()
@@ -109,6 +150,34 @@ def selectPoll(pollID):
     print(result)
 
     return result
+
+
+def getPollsOfUser(username):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    print("selecting table")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+    select_user = "SELECT user_id FROM users WHERE username = %s"
+    cursor.execute(select_user, (username,))
+    user_id = cursor.fetchone()
+
+    conn.commit()
+
+    select_polls = "SELECT title FROM polls WHERE user_id = %s"
+    cursor.execute(select_polls, (user_id,))
+
+    polls = cursor.fetchall()
+    pollTitles = [{"title": title} for title in polls]
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    print(polls)
+
+    return pollTitles
 
 
 def getChoicesText(pollID):

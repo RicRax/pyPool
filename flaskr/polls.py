@@ -10,6 +10,7 @@ from flask import (
 import json
 import logging
 from flask_jwt_extended import (
+    get_jwt,
     verify_jwt_in_request,
     get_jwt_identity,
 )
@@ -27,12 +28,18 @@ def createPollRoutes(app, aws_auth):
 
     @app.route("/createEndpoint", methods=["POST"])
     def createEndpoint():
+        verify_jwt_in_request()
+        if get_jwt_identity() is None:
+            return jsonify({"claims": "not authenticated"})
+        else:
+            id = get_jwt()
         app.logger.info(f"Received form data: {request.get_json()}")
         data = request.get_json()
         db.createPoll(
             data["poll_title"],
             data["poll_description"],
             data["choices[]"],
+            id["username"],
         )
         return jsonify("hello")
 

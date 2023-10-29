@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome, {{ username }}</title>
+</head>
+<body>
+    <h1>Welcome, {{ username }}</h1>
+
+    <h2>Your Polls</h2>
+    <ul>
+        {% for poll in polls %}
+            <li>{{ poll.title }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
