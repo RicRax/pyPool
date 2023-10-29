@@ -55,11 +55,12 @@ def createPollRoutes(app, aws_auth):
 
         return jsonify(pollinfo)
 
-    @app.route("/viewPoll/<int:pollID>")
-    def viewPoll(pollID):
+    @app.route("/viewPoll/<pollTitle>")
+    def viewPoll(pollTitle):
         verify_jwt_in_request()
         if get_jwt_identity() is None:
             return jsonify({"claims": "not authenticated"})
+        pollID = db.getPollIdFromTitle(pollTitle)
         return render_template("viewPoll.html", pollID=pollID)
 
     @app.route("/votePoll/<int:pollID>")

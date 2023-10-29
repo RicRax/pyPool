@@ -152,6 +152,27 @@ def selectPoll(pollID):
     return result
 
 
+def getPollIdFromTitle(pollTitle):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    print(pollTitle)
+
+    select_poll = "SELECT poll_id FROM polls WHERE title = %s"
+    cursor.execute(select_poll, (pollTitle,))
+
+    pollId = cursor.fetchone()
+    pollIdInt = int(pollId[0])
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return pollIdInt
+
+
 def getPollsOfUser(username):
     conn = psycopg2.connect(user="riccardo", database="pyPoll")
 
@@ -168,16 +189,16 @@ def getPollsOfUser(username):
     select_polls = "SELECT title FROM polls WHERE user_id = %s"
     cursor.execute(select_polls, (user_id,))
 
-    polls = cursor.fetchall()
-    pollTitles = [{"title": title} for title in polls]
+    pollTitles = cursor.fetchall()
+    pollNames = [row[0] for row in pollTitles]
 
     conn.commit()
     cursor.close()
     conn.close()
 
-    print(polls)
+    print(pollNames)
 
-    return pollTitles
+    return pollNames
 
 
 def getChoicesText(pollID):
