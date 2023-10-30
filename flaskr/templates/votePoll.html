@@ -5,20 +5,20 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="bg-dark">
-    <h1>Poll Choices</h1>
+    <h1 class="text-light text-center" id="poll-title">Poll Choices</h1>
 
-    <p id="poll-title"></p>
+    <p class="text-light text-center" id="poll-description"></p>
 
-    <p id="poll-description"></p>
+    <ul class="list-group text-center" id="choices-list"></ul>
 
-    <ul id="choices-list"></ul>
-
-    <h2>Vote for a Choice</h2>
-    <form id="vote-form">
-        <select id="choice-select">
+    <h2 class="text-light text-center">Vote for a Choice</h2>
+    <form class="form-select mx-auto" id="vote-form">
+      <div class="mb-3 d-flex justify-content-center align-items-center">
+        <select "form-select mx-auto" id="choice-select">
             <!-- Options will be populated using JavaScript -->
         </select>
-        <button type="submit">Vote</button>
+        <button class="btn btn-primary" type="submit">Vote</button>
+       </div>
     </form>
 
     <div id="result-message"></div>
@@ -40,8 +40,8 @@ fetch(`/getpoll/{{ pollID }}`)
             const choiceSelect = document.getElementById("choice-select");
 
             data.forEach(choice => {
-                choicesList.innerHTML += `<li>${choice[0]}</li>`;
-                choiceSelect.innerHTML += `<option value="${choice[0]}">${choice[0]}</option>`;
+                choicesList.innerHTML += `<li class="list-group-item bg-dark text-light">${choice[1]}</li>`;
+                choiceSelect.innerHTML += `<option value="${choice[1]}">${choice[1]}</option>`;
             });
         })
         .catch(error => console.error("Error fetching poll choices:", error));
