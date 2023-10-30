@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,15 +8,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-dark">
-  <h1 class="display-4 text-center text-light" id="poll-title"></h1>
+    <h1 class="display-4 text-center text-light" id="poll-title"></h1>
     <div class="container bg-dark" id="poll-details">
-        <h2 class="lead text-light" id="poll-description"></h2>
-        <canvas id="chart" width="400" height="400"></canvas>
-    </div>
+        <h2 class="lead text-light text-center" id="poll-description"></h2>
+         <!-- Button to copy the link to clipboard -->
+        <button id="copyLinkBtn" class="btn btn-primary">Copy Link to let others vote!</button>
+
+        <canvas id="piechart" width="50" height="50"></canvas>
+        <canvas id="barchart" width="50" height="50"></canvas>
+           </div>
 
     <script>
         // Fetch poll details from the Flask API
-      fetch(`/getpoll/{{ pollID }}`)
+        fetch(`/getpoll/{{ pollID }}`)
             .then(response => response.json())
             .then(data => {
                 // Update the HTML elements with poll data
@@ -23,7 +28,7 @@
                 document.getElementById('poll-description').textContent = data.description;
                 
                 // Fetch choices and vote counts from /getChoices/{pollID}
-              return fetch(`/getChoices/{{ pollID }}`);
+                return fetch(`/getChoices/{{ pollID }}`);
             })
             .then(response => response.json())
             .then(choiceData => {
@@ -32,8 +37,31 @@
                 const voteCounts = choiceData.map(choice => choice[3]); // Third index for vote counts
 
                 // Create a bar chart to display vote counts
-                const chartCanvas = document.getElementById('chart').getContext('2d');
-                new Chart(chartCanvas, {
+               const chartCanvas = document.getElementById('piechart').getContext('2d');
+               new Chart(chartCanvas, {
+                   type: 'pie', // Change the chart type to 'pie'
+                   data: {
+                       labels: choices,
+                       datasets: [{
+                           data: voteCounts, // Use voteCounts as data for the pie chart
+                           backgroundColor: [
+                               'rgba(255, 99, 132, 0.6)',
+                               'rgba(54, 162, 235, 0.6)',
+                               'rgba(255, 206, 86, 0.6)',
+                               'rgba(75, 192, 192, 0.6)',
+                               'rgba(153, 102, 255, 0.6)',
+                           ],
+                       }]
+                   },
+                   options: {
+                   }
+               });
+
+
+
+                // Create a bar chart to display vote counts
+                const barchartCanvas = document.getElementById('barchart').getContext('2d');
+                new Chart(barchartCanvas, {
                     type: 'bar',
                     data: {
                         labels: choices,
@@ -54,8 +82,23 @@
                         }
                     }
                 });
+                // Button click event to copy link to clipboard
+                document.getElementById('copyLinkBtn').addEventListener('click', () => {
+                    const pollLink = `/votePoll/{{ pollID }}`;
+
+                    // Create a temporary input element to copy the link
+                    const tempInput = document.createElement('input');
+                    tempInput.setAttribute('value', pollLink);
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+
+                    alert('Link copied to clipboard: ' + pollLink);
+                });
             })
             .catch(error => console.error(error));
     </script>
 </body>
 </html>
+
