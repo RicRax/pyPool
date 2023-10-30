@@ -2,11 +2,15 @@
 <html>
 <head>
     <title>Poll Page</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body>
+<body class="bg-dark">
     <h1>Poll Choices</h1>
 
-    <!-- Display poll choices here -->
+    <p id="poll-title"></p>
+
+    <p id="poll-description"></p>
+
     <ul id="choices-list"></ul>
 
     <h2>Vote for a Choice</h2>
@@ -20,6 +24,14 @@
     <div id="result-message"></div>
 
     <script>
+fetch(`/getpoll/{{ pollID }}`)
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML elements with poll data
+                document.getElementById('poll-description').textContent = data.description;
+              document.getElementById('poll-title').textContent = data.title
+            });
+
     // Fetch poll choices and populate the options in the dropdown
     fetch(`/getChoices/{{ pollID }}`)
         .then(response => response.json())
