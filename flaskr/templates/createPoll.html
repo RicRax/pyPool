@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Create a Poll</title>
 </head>
-<body>
-    <h1>Create a Poll</h1>
-    <form  id="myForm" action="http://localhost:5000/createEndpoint" method="POST">
-        <label for="poll_title">Poll Title:</label>
-        <input type="text" id="poll_title" name="poll_title" required><br><br>
+<body class="bg-dark">
+    <h1 class="display-4 text-center text-light">Create a Poll</h1>
+    <form class="mx-auto" id="myForm" action="http://localhost:5000/createEndpoint" method="POST">
+        <label class="text-light text-center display-5" for="poll_title">Poll Title:</label>
+        <input class="bg-dark text-light" type="text" id="poll_title" name="poll_title" required><br><br>
         <input type="hidden" name="json_data" ="json_data" value="">
 
-        <label for="poll_description">Poll Description:</label>
-        <textarea id="poll_description" name="poll_description" rows="4" cols="50"></textarea><br><br>
+        <label class="text-light" for="poll_description">Poll Description:</label>
+        <textarea class="bg-dark text-light" id="poll_description" name="poll_description" rows="4" cols="50"></textarea><br><br>
 
-        <h2>Choices:</h2>
+        <h2 class="text-light text-center display-4">Choices:</h2>
         <div id="choices">
             <div class="choice">
-                <label for="choice_1">Choice 1:</label>
-                <input type="text" id="choice_1" name="choices[]" required>
+                <label class="text-light" for="choice_1">Choice 1:</label>
+                <input class="bg-dark text-light" type="text" id="choice_1" name="choices[]" required>
             </div>
         </div>
         <button type="button" onclick="addChoice()">Add Choice</button><br><br>
@@ -35,10 +36,12 @@
 
             const label = document.createElement("label");
             label.setAttribute("for", `choice_${choiceCount}`);
+            label.setAttribute("class", `text-light`);
             label.textContent = `Choice ${choiceCount}:`;
 
             const input = document.createElement("input");
             input.setAttribute("type", "text");
+            input.setAttribute("class", `bg-dark text-light`);
             input.setAttribute("id", `choice_${choiceCount}`);
             input.setAttribute("name", "choices[]");
             input.setAttribute("required", "required");
