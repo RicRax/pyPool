@@ -41,7 +41,7 @@
 
             const input = document.createElement("input");
             input.setAttribute("type", "text");
-            input.setAttribute("class", `bg-dark text-light`);
+            label.setAttribute("class", `bg-dark text-light`);
             input.setAttribute("id", `choice_${choiceCount}`);
             input.setAttribute("name", "choices[]");
             input.setAttribute("required", "required");
@@ -82,5 +82,8 @@
 
     });
     </script>
+
+
 </body>
+    {% include "footer.html" %}  <!-- Include the footer template -->
 </html>

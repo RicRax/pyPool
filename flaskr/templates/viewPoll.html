@@ -12,7 +12,9 @@
     <div class="container bg-dark" id="poll-details">
         <h2 class="lead text-light text-center" id="poll-description"></h2>
          <!-- Button to copy the link to clipboard -->
+         <div class="text-center">
         <button id="copyLinkBtn" class="btn btn-primary">Copy Link to let others vote!</button>
+         </div>
 
         <canvas id="piechart" width="50" height="50"></canvas>
         <canvas id="barchart" width="50" height="50"></canvas>
@@ -100,5 +102,6 @@
             .catch(error => console.error(error));
     </script>
 </body>
+    {% include "footer.html" %}  <!-- Include the footer template -->
 </html>
 
