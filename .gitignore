@@ -1,5 +1,6 @@
 .mypy_cache/
 flaskr/__pycache__/
 flaskr/config.py
+instance/.env
 
 
