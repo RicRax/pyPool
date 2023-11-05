@@ -53,7 +53,7 @@ def cognitoRoutes(app, aws_auth):
         verify_jwt_in_request()
         if get_jwt_identity():
             id = get_jwt()
-            if db.checkIfUserExists(id["username"], id["sub"]):
+            if db.checkIfUserExists(id["username"].strip("'"), id["sub"]):
                 polls = db.getPollsOfUser(id["username"])
             else:
                 polls = None

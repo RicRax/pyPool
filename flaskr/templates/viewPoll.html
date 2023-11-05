@@ -22,7 +22,7 @@
 
     <script>
         // Fetch poll details from the Flask API
-        fetch(`/getpoll/{{ pollID }}`)
+        fetch(`/polls/{{ pollID }}`)
             .then(response => response.json())
             .then(data => {
                 // Update the HTML elements with poll data
@@ -30,7 +30,7 @@
                 document.getElementById('poll-description').textContent = data.description;
                 
                 // Fetch choices and vote counts from /getChoices/{pollID}
-                return fetch(`/getChoices/{{ pollID }}`);
+                return fetch(`/choices/{{ pollID }}`);
             })
             .then(response => response.json())
             .then(choiceData => {

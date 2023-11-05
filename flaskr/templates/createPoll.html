@@ -6,7 +6,7 @@
 </head>
 <body class="bg-dark">
     <h1 class="display-4 text-center text-light">Create a Poll</h1>
-    <form class="mx-auto" id="myForm" action="http://localhost:5000/createEndpoint" method="POST">
+    <form class="mx-auto" id="myForm" action="http://localhost:5000/polls" method="POST">
         <label class="text-light text-center display-5" for="poll_title">Poll Title:</label>
         <input class="bg-dark text-light" type="text" id="poll_title" name="poll_title" required><br><br>
         <input type="hidden" name="json_data" ="json_data" value="">
@@ -72,7 +72,7 @@
 
         // Convert the JSON object to a JSON string
         var jsonString = JSON.stringify(formDataObject);
-        fetch(`/createEndpoint`, {
+        fetch(`/polls`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

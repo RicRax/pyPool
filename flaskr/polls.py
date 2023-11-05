@@ -26,7 +26,7 @@ def createPollRoutes(app, aws_auth):
             return jsonify({"claims": "not authenticated"})
         return render_template("createPoll.html")
 
-    @app.route("/createEndpoint", methods=["POST"])
+    @app.route("/polls", methods=["POST"])
     def createEndpoint():
         verify_jwt_in_request()
         if get_jwt_identity() is None:
@@ -43,7 +43,7 @@ def createPollRoutes(app, aws_auth):
         )
         return jsonify("hello")
 
-    @app.route("/getpoll/<int:pollid>")
+    @app.route("/polls/<int:pollid>")
     def getpoll(pollid):
         verify_jwt_in_request()
         if get_jwt_identity() is None:
@@ -70,7 +70,7 @@ def createPollRoutes(app, aws_auth):
             return jsonify({"claims": "not authenticated"})
         return render_template("votePoll.html", pollID=pollID)
 
-    @app.route("/voteEndpoint/<int:pollID>", methods=["POST"])
+    @app.route("/polls/<int:pollID>/vote", methods=["POST"])
     def voteEndpoint(pollID):
         verify_jwt_in_request()
         if get_jwt_identity() is None:
@@ -84,7 +84,7 @@ def createPollRoutes(app, aws_auth):
         print(votes)
         return jsonify(votes)
 
-    @app.route("/getChoicesText/<int:pollid>")
+    @app.route("/choices/<int:pollid>/text")
     def getChoicesText(pollid):
         # verify_jwt_in_request()
         # if get_jwt_identity() is none:
@@ -96,7 +96,7 @@ def createPollRoutes(app, aws_auth):
 
         return jsonify(choices)
 
-    @app.route("/getChoices/<int:pollid>")
+    @app.route("/choices/<int:pollid>")
     def getChoices(pollid):
         # verify_jwt_in_request()
         # if get_jwt_identity() is none:

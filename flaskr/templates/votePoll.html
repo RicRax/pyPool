@@ -24,7 +24,7 @@
     <div id="result-message"></div>
 
     <script>
-fetch(`/getpoll/{{ pollID }}`)
+fetch(`/polls/{{ pollID }}`)
             .then(response => response.json())
             .then(data => {
                 // Update the HTML elements with poll data
@@ -33,7 +33,7 @@ fetch(`/getpoll/{{ pollID }}`)
             });
 
     // Fetch poll choices and populate the options in the dropdown
-    fetch(`/getChoices/{{ pollID }}`)
+    fetch(`/choices/{{ pollID }}`)
         .then(response => response.json())
         .then(data => {
             const choicesList = document.getElementById("choices-list");
@@ -58,7 +58,7 @@ fetch(`/getpoll/{{ pollID }}`)
             return;
         }
 
-        fetch(`/voteEndpoint/{{ pollID }}`, {
+        fetch(`/polls/{{ pollID }}/vote`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
