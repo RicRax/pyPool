@@ -1,14 +1,8 @@
 from flask import (
-    Flask,
-    make_response,
-    redirect,
     render_template,
     request,
     jsonify,
-    url_for,
 )
-import json
-import logging
 from flask_jwt_extended import (
     get_jwt,
     verify_jwt_in_request,
@@ -18,7 +12,7 @@ from flask_jwt_extended import (
 from . import db
 
 
-def createPollRoutes(app, aws_auth):
+def createPollRoutes(app, statsd):
     @app.route("/createPoll")
     def createPoll():
         verify_jwt_in_request()
@@ -41,7 +35,8 @@ def createPollRoutes(app, aws_auth):
             data["choices[]"],
             id["username"],
         )
-        return jsonify("hello")
+        with statsd.timer("request.duration"):
+            return jsonify("hello")
 
     @app.route("/polls/<int:pollid>")
     def getpoll(pollid):
@@ -99,7 +94,7 @@ def createPollRoutes(app, aws_auth):
     @app.route("/choices/<int:pollid>")
     def getChoices(pollid):
         # verify_jwt_in_request()
-        # if get_jwt_identity() is none:
+        # if get_jwt_identity() is None:
         #     return jsonify({"claims": "not authenticated"})
         #
         choices = db.getChoices(pollid)
@@ -107,3 +102,13 @@ def createPollRoutes(app, aws_auth):
         print(choices)
 
         return jsonify(choices)
+
+    @app.route("/polls/{pollTitle}")
+    def deletePoll(pollTitle):
+        verify_jwt_in_request()
+        if get_jwt_identity() is None:
+            return jsonify({"claims": "not authenticated"})
+
+        db.deletePoll(pollTitle)
+
+        return jsonify({"claims": "Poll {pollTitle} successfully deleted"})

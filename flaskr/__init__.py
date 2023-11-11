@@ -6,6 +6,8 @@ from flask_awscognito import AWSCognitoAuthentication
 from dotenv import load_dotenv
 import logging
 
+from statsd import StatsClient
+
 from .config import Config
 from . import cognito
 from . import db
@@ -20,6 +22,8 @@ def create_app(test_config=None):
     load_dotenv()
 
     aws_auth = AWSCognitoAuthentication(app)
+
+    statsd = StatsClient(host="localhost", port=8125, prefix="pyPoll")
 
     try:
         os.makedirs(app.instance_path)
@@ -39,7 +43,7 @@ def create_app(test_config=None):
     app.logger.addHandler(console_handler)
 
     cognito.cognitoRoutes(app, aws_auth)
-    polls.createPollRoutes(app, aws_auth)
+    polls.createPollRoutes(app, statsd)
     db.initDB(app)
 
     return app

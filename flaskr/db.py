@@ -1,4 +1,3 @@
-from os import walk
 import logging
 import psycopg2
 
@@ -251,6 +250,25 @@ def insertVote(pollID, choiceText):
 
     update_query = "UPDATE choices SET votes = votes + 1 WHERE poll_id = %s AND choice_text = %s RETURNING votes"
     cursor.execute(update_query, (pollID, choiceText))
+
+    votes = cursor.fetchone()
+    # not sure if working properly
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return votes
+
+
+def deletePoll(pollID):
+    conn = psycopg2.connect(user="riccardo", database="pyPoll")
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+
+    delete_query = "UPDATE choices SET votes = votes + 1 WHERE poll_id = %s AND choice_text = %s RETURNING votes"
+    cursor.execute(delete_query, pollID)
 
     votes = cursor.fetchone()
     # not sure if working properly
